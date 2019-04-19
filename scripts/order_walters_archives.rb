@@ -10,7 +10,7 @@ GROUPS = %i{ a b c d }
 CSV.foreach(input_csv, headers: true).with_index do |row,index|
   # binding.pry
   break if row['size_in_gb'].to_f > 100
-  if index < 40
+  if index < 41
     (data_blocks[:first_set] ||= []) << row.to_hash
   else
     g_index = ((index - 39)/100) % GROUPS.size
