@@ -1,0 +1,9 @@
+82	01_ACCESS_WALTERS_MANUSCRIPTS.html
+24	02_ACCESS_OTHER_BOOKS.html
+24	03_ReadMe.html
+24	04_TechnicalReadMe.html
+18986746432	Data
+310	html
+1	new_server.txt
+1	robots.txt
+764	Supplemental
