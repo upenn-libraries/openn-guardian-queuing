@@ -57,7 +57,7 @@ compressed_destination: /zip_workspace
 compressed_extension: zip
 verification_destination: /zip_workspace
 verification_sample_size: ALL
-vault: stronghold
+vault: openn
 application: openn
 method: rsync
 todo_prefix:
@@ -65,6 +65,7 @@ description_values:
   owner: demery
   repository:
   openn_repo_id: 
+  source:
 directive_names:
 EOF
 
@@ -130,6 +131,7 @@ repos.each do |repo_id, repo|
   hash['todo_prefix']                         = "#{repo.repo_id}_"
   hash['description_values']['repository']    = repo.name
   hash['description_values']['openn_repo_id'] = repo.repo_id
+  hash['description_values']['source']        = repo.source
   hash['directive_names']                     = repo.folders
   out_file = File.expand_path "../../tmp/inventory_#{repo.repo_id}.yml", __FILE__
   File.open(out_file, 'wb+') { |f| f.puts hash.to_yaml }
