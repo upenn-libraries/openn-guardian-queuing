@@ -154,14 +154,7 @@ Become root
 Copy tgz to /root
 Untar
 
-```
-guardian02[~]$ root
-root@guardian02[~]# ls ~emeryr
-openn_guardian_todos.tgz  todo-batch3-20191217.tgz
-root@guardian02[~]# cp ~emeryr/todo-batch3-20191217.tgz .
-root@guardian02[~]# tar xf todo-batch3-20191217.tgz
-
-```
+Move all todo files to `/root/todo`
 
 Copy files to `guardian_guardian_todos` docker volume
 
@@ -193,7 +186,7 @@ Clean up `/work`. As root:
 
 ```bash
 cd /work/
-tar czf openn-logs.tgz openn-*.log
+tar czf openn-`date +%Y%m%d`-logs.tgz openn-*.log
 # use cp -i flag so we don't overwrite by mistake
 cp -i openn-logs.tgz /root
 # get the names of all files, excluding the logs
@@ -201,43 +194,16 @@ dirs=$(ls | grep -v \.log)
 rm -rf $dirs
 ```
 
-In the todos directory:
+Replace all the `.FAIL`, `.*-processing`, and `.*-running` files with the originals. 
+
+**DO NOT RENAME FILES TO x.todo**
+
 
 ```
-cd /var/lib/docker/volumes/guardian_guardian_todos/_data
+for x in *.FAIL; do source=/root/todo/`basename $x .FAIL`.todo; cp -v $source .; mv -v $x $x.bak; done
 ```
 
-Rename `*-processing` files:
-
-```
-# first test by echoing the command
-for x in *.*-processing; do new=$(sed 's/\.[0-9][0-9]*-processing//' <<< $x).todo; echo mv -v $x $new; done
-# then remove echo and run the command
-for x in *.*-processing; do new=$(sed 's/\.[0-9][0-9]*-processing//' <<< $x).todo; mv -v $x $new; done
-```
-
-Rename the `*.FAIL files:
-
-```bash
-root@guardian02[/var/lib..odos/_data]# ls *.FAIL
-B00522_0002_ms_coll_700_item106.FAIL  C00532_0016_2003_82_443.FAIL   C00569_0016_29_201_709.FAIL  C00591_0007_lehigh_002.FAIL  C00621_0007_BookofHoursoftheRomanuse_18.FAIL
-...
-
-root@guardian02[/var/lib..odos/_data]# for x in *.FAIL; do new=$(basename $x .FAIL).todo; echo mv -v $x $new; done
-mv -v B00522_0002_ms_coll_700_item106.FAIL B00522_0002_ms_coll_700_item106.todo
-mv -v B00636_0002_ms_coll_700_item187.FAIL B00636_0002_ms_coll_700_item187.todo
-...
-
-root@guardian02[/var/lib..odos/_data]# for x in *.FAIL; do new=$(basename $x .FAIL).todo; mv -v $x $new; done
-‘B00522_0002_ms_coll_700_item106.FAIL’ -> ‘B00522_0002_ms_coll_700_item106.todo’
-‘B00636_0002_ms_coll_700_item187.FAIL’ -> ‘B00636_0002_ms_coll_700_item187.todo’
-```
-
-Rename any `\*-running` files:
-
-```
-root@guardian02[/var/lib..odos/_data]# mv B00522_0002_ms_coll_700_item106.glacier-running B00522_0002_ms_coll_700_item106.todo
-```
+Repeat for `.*-processing` and `.*-running` files.
 
 Start the processes:
 
