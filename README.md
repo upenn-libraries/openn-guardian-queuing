@@ -15,6 +15,55 @@ TODO:
 - `sort_todo_files.rb`
 - `split_by_size.rb`
 
+# Adding new reporitories to the list
+
+On the OPenn server, run `openn_sizes.rb` to get the CSV of new items to add to
+the Guardian Sizes sheet of the Guardian Priorities.xlsx file.  
+
+
+Before you running the script save the current Guardian Size sheet from the
+Guardian Priorities.xlsx workbook as
+
+- `data/Glacier_Priorities-Glacier_sizes.csv`. 
+
+Also save as a CSV the current 'Completed' sheet, as 
+
+- `data/Glacier_Priorities-Completed.csv`.
+
+Set the `OPENN_ROOT_DIR` environment variable. This is the local directory that
+serves as the OPenn site root directory. Its contents look like this:
+
+```
+-rw-rw-r--  1 emeryr domain users 7.3K Apr 14 19:10 CuratedCollections.html
+drwxrwxr-x 52 emeryr openn         109 Apr 10 11:23 Data
+drwxrwxr-x  6 emeryr openn          95 Apr 10 11:22 html
+-rw-rw-r--  1 emeryr domain users  13K Apr 14 19:10 ReadMe.html
+-rw-rw-r--  1 emeryr domain users  44K Apr 14 19:10 Repositories.html
+-rw-r--r--  1 emeryr openn          24 Sep 10  2015 robots.txt
+-rw-r--r--  1 emeryr openn        4.3K May 18  2018 Search.html
+-rw-rw-r--  1 emeryr domain users  88K Apr 14 19:10 TechnicalReadMe.html
+```
+
+Run the script:
+
+```
+OPENN_ROOT_DIR=/path/to/OPenn ruby scripts/openn_sizes.rb > `sizes.csv`
+```
+
+Now add the new objects to the Glacier Sizes worksheet:
+
+- Copy `sizes.csv` to your local computer.
+
+- Create a new empty Excel workbook.
+
+- Import `sizes.csv` into the new workbook as CSV, _set all columns to Text_.
+
+- Copy all rows _except for the header_.
+
+- Using Paste Special... > Values, paste the new rows to the end of the
+  Guardian Priorities/Guardian Sizes sheet.
+
+
 # Pushing/Resetting todos on guardian servers
 
 Create new todos:
