@@ -15,20 +15,19 @@ TODO:
 - `sort_todo_files.rb`
 - `split_by_size.rb`
 
-# Adding new reporitories to the list
+# Adding new repositories to the list
 
 On the OPenn server, run `openn_sizes.rb` to get the CSV of new items to add to
-the Guardian Sizes sheet of the Guardian Priorities.xlsx file.  
+the Guardian Sizes sheet of the Guardian Priorities.xlsx file.
 
-
-Before you running the script save the current Guardian Size sheet from the
+Before you run the script save the current Guardian Size sheet from the
 Guardian Priorities.xlsx workbook as
 
-- `data/Glacier_Priorities-Glacier_sizes.csv`. 
+- `data/Glacier_Priorities-Glacier_sizes.csv`
 
-Also save as a CSV the current 'Completed' sheet, as 
+Also save as a CSV the current 'Completed' sheet, as
 
-- `data/Glacier_Priorities-Completed.csv`.
+- `data/Glacier_Priorities-Completed.csv`
 
 Set the `OPENN_ROOT_DIR` environment variable. This is the local directory that
 serves as the OPenn site root directory. Its contents look like this:
@@ -62,7 +61,6 @@ Now add the new objects to the Glacier Sizes worksheet:
 
 - Using Paste Special... > Values, paste the new rows to the end of the
   Guardian Priorities/Guardian Sizes sheet.
-
 
 # Pushing/Resetting todos on guardian servers
 
@@ -104,12 +102,12 @@ inventory_0003.yml
 
 
 ```
-for x in ~/code/GIT/openn-guardian-queuing/tmp/*.yml; do 
+for x in ~/code/GIT/openn-guardian-queuing/tmp/*.yml; do
   bundle exec ruby guardian_manifest.rb $x $x.csv
 done
 ```
 
-Move CSV's to some location
+Move CSVs to some location
 
 ```
 mv inventory_000*.yml.csv ~/code/GIT/openn-guardian-queuing/tmp/
@@ -170,7 +168,7 @@ ruby scripts/sort_todo_files.rb tmp/batch-2019-Dec.csv tmp
 `tmp` is the directory contain the the todo files and `tmp/batch-2019-Dec.csv`
 is a csv worksheet Glacier Sizes from the Glacier Priorities workbook.
 
-Each todo file will be copy to the `tmp/todo` and its name prepended with an group tag and serial number:
+Each todo file will be copied to `tmp/todo` and its name prepended with a group tag and serial number:
 
 ```
 cp tmp/0002_mscoll990_item16.todo /Users/emeryr/code/GIT/openn-guardian-queuing/tmp/todo/A00001_0002_mscoll990_item16.todo
@@ -243,7 +241,7 @@ dirs=$(ls | grep -v \.log)
 rm -rf $dirs
 ```
 
-Replace all the `.FAIL`, `.*-processing`, and `.*-running` files with the originals. 
+Replace all the `.FAIL`, `.*-processing`, and `.*-running` files with the originals.
 
 **DO NOT RENAME FILES TO x.todo**
 
