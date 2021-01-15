@@ -22,7 +22,7 @@ require 'yaml'
 # 0020_PC11,0020,Data/OtherCollections,1,A,The Walters Art Museum,"34,810,998",33.198,PC11,,
 # 0020_PC2,0020,Data/OtherCollections,1,A,The Walters Art Museum,"24,952,886",23.797,PC2,,
 # 0020_PC3,0020,Data/OtherCollections,1,A,The Walters Art Museum,"42,493,355",40.525,PC3,,
-# 
+#
 # Output format:
 #
 #  ---
@@ -73,14 +73,21 @@ EOF
 # Get the CSV input file
 file = ARGV.shift
 
+def build_repo_tag repo_id, path_extension=nil
+  return repo_id if path_extension.to_s.empty?
+
+  "#{repo_id}-#{path_extension.to_s.gsub '/', ''}"
+end
+
 class Repo
-  attr_accessor :repo_id, :path_extension, :name, :folders
+  attr_accessor :repo_id, :path_extension, :name, :repo_tag, :folders
 
   BASE_SOURCE_URL = 'rsync://openn.library.upenn.edu/OPenn/Data'
 
-  def initialize repo_id:, path_extension:, name:
+  def initialize repo_id:, path_extension:, name:, repo_tag: nil
     @repo_id        = repo_id
     @path_extension = path_extension
+    @repo_tag       = repo_tag || "#{repo_id}-#{path_extension.to_s.gsub '/', ''}"
     @name           = name
     @folders        = []
   end # def initialize repo:, path_extension:, name:
@@ -109,8 +116,8 @@ class Repo
   #
   # @return [String] URI for the source directory on OPenn
   def source
-    return BASE_SOURCE_URL + '/' + repo_id unless path_extension 
-    BASE_SOURCE_URL + '/' + repo_id + '/' + path_extension.sub(%r{^\s*/}, '').sub(%r{/\s*$}, '') 
+    return BASE_SOURCE_URL + '/' + repo_id unless path_extension
+    BASE_SOURCE_URL + '/' + repo_id + '/' + path_extension.sub(%r{^\s*/}, '').sub(%r{/\s*$}, '')
   end # def source
 end
 
@@ -118,10 +125,13 @@ repos = {}
 
 # Build all the Repo objects
 CSV.foreach file, headers: true do |row|
-  repo_id = row['repo']
+  repo_id        = row['repo']
+  path_extension = row['Path extension']
+  name           = row['Repo Name']
+  repo_tag       = build_repo_tag repo_id, path_extension
   next unless repo_id
-  repos[repo_id] ||= Repo.new repo_id: repo_id, path_extension: row['Path extension'], name: row['Repo Name']
-  repos[repo_id] << row['folder']
+  repos[repo_tag] ||= Repo.new repo_id: repo_id, path_extension: path_extension, name: name, repo_tag: repo_tag
+  repos[repo_tag] << row['folder']
 end
 
 # Create the YAML files.
@@ -133,7 +143,7 @@ repos.each do |repo_id, repo|
   hash['description_values']['openn_repo_id'] = repo.repo_id
   hash['description_values']['source']        = repo.source
   hash['directive_names']                     = repo.folders
-  out_file = File.expand_path "../../tmp/inventory_#{repo.repo_id}.yml", __FILE__
+  out_file = File.expand_path "../../tmp/inventory_#{repo.repo_tag}.yml", __FILE__
   File.open(out_file, 'wb+') { |f| f.puts hash.to_yaml }
   puts "Wrote: #{out_file}"
 end
