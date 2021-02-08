@@ -1,3 +1,4 @@
+
 ##
 # Return true if +host_code+ is valid and +group_code+ is listed in its groups.
 #
@@ -41,7 +42,7 @@ end
 ##
 # Run the command +cmd+.
 def run_command cmd, silent=false
-  puts "Running comand: #{cmd}" unless silent
+  puts "Running command: #{cmd}" unless silent
 
   if silent
     `#{cmd}`
