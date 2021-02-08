@@ -44,11 +44,11 @@ unless File.directory? input_dir
   exit 1
 end
 
+csv_file = File.absolute_path csv_file
+input_dir = File.absolute_path input_dir
+
+
 COUNTS = Hash.new { |hash, group| hash[group] = 0 }
-
-output_dir = File.expand_path "../../tmp/todo", __FILE__
-FileUtils.mkdir_p output_dir unless File.exist? output_dir
-
 CSV.foreach csv_file, headers: true do |row|
   key           = row['Key']
   todo_expected = File.join input_dir, "#{key}.todo"
@@ -56,8 +56,8 @@ CSV.foreach csv_file, headers: true do |row|
   count         = COUNTS[group] += 1
 
   out_file      = sprintf "%s%05d_%s", group, count, File.basename(todo_expected)
-  out_path      = File.join output_dir, out_file
+  out_path      = File.join input_dir, out_file
   
   # puts sprintf("%-40s    %s", File.basename(todo_expected), out_path)
-  FileUtils.cp todo_expected, out_path, verbose: true
+  FileUtils.mv todo_expected, out_path, verbose: true
 end
