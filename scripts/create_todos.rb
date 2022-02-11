@@ -42,8 +42,8 @@ LOGGER.info(CMD) { "Build guardian manifest CSVs from inventory YMLs" }
 guardian_manifest_dir = File.join TMP_DIR, 'guardian_manifest'
 unless Dir.exist? guardian_manifest_dir
   LOGGER.info(CMD) { "Pulling guardian manifest from gitlab" }
-  cmd = %Q{git clone ssh://git@gitlab.library.upenn.edu:2223/digital-repository/guardian_manifest.git #{guardian_manifest_dir}}
-  exit status 1 unless run_command
+  cmd = %Q{git clone https://gitlab.library.upenn.edu/digital-repository/guardian_manifest.git #{guardian_manifest_dir}}
+  exit status 1 unless run_command cmd
   Dir.chdir guardian_manifest_dir do
     cmd = 'bundle'
     exit 1 unless run_command cmd
@@ -55,6 +55,9 @@ Dir.chdir guardian_manifest_dir do
   yml_files.each do |yml|
     cmd = %Q{bundle exec ruby guardian_manifest.rb #{yml} #{yml}.csv #{TMP_DIR}}
     exit 1 unless run_command cmd
+    # guardian_manifest insists on writing files to the working dir; we have to move them
+    manifests = Dir["inventory*.yml.csv"]
+    FileUtils.mv manifests, TMP_DIR, verbose: true
   end
 end
 
@@ -63,7 +66,7 @@ LOGGER.info(CMD) { "Create individual todo files from guardian manifest CSVs" }
 csv_to_yaml_dir = File.join TMP_DIR, 'csv_to_yaml'
 unless Dir.exist? csv_to_yaml_dir
   LOGGER.info(CMD) { "Pulling csv_to_yaml from gitlab" }
-  cmd = %Q{git clone ssh://git@gitlab.library.upenn.edu:2223/utils/csv_to_yml.git #{csv_to_yaml_dir}}
+  cmd = %Q{git clone https://gitlab.library.upenn.edu/utils/csv_to_yml.git #{csv_to_yaml_dir}}
   exit 1 unless run_command cmd
   Dir.chdir csv_to_yaml_dir do
     cmd = 'bundle'
